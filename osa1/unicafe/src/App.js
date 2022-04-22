@@ -14,7 +14,7 @@ const Button = (props) => {
 
 const Stat = (props) => {
   let unit = ''
-  if (props.text=="Positive") {
+  if (props.text==="Positive") {
     unit = '%'
   }
 
