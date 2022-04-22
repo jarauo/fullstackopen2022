@@ -13,9 +13,14 @@ const Button = (props) => {
 }
 
 const Stat = (props) => {
+  let unit = ''
+  if (props.text=="Positive") {
+    unit = '%'
+  }
+
   return (
     <p>
-      {props.text} {props.value}
+      {props.text} {props.value} {unit}
     </p>
   )
 }
@@ -25,6 +30,12 @@ const App = () => {
   const [good, setGood] = useState(0)
   const [neutral, setNeutral] = useState(0)
   const [bad, setBad] = useState(0)
+
+  let all = (good+neutral+bad)
+
+  let avg = (good-bad)/all
+
+  let pos = (good/all)*100
 
   return (
     <div>
@@ -38,6 +49,9 @@ const App = () => {
       <Stat text="Good" value={good} /> 
       <Stat text="Neutral" value={neutral} /> 
       <Stat text="Bad" value={bad} />
+      <Stat text="All" value={all} />
+      <Stat text="Average" value={avg} />
+      <Stat text="Positive" value={pos} />
     </div>
   )
 }
