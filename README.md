@@ -1,6 +1,6 @@
-# esimerkkipalauitusrepositorio
+# Kurssitehtävien palautusrepositorio
 
-Eräs varsin toimiva hakemistorakenne palautusrepositoriolle on tässä esimerkkirepositoriossa käytetty tapa, jossa kutakin kutakin osaa kohti on oma hakemistonsa, joka vielä jakautuu tehtäväsarjat (kuten osan 1 unicafe) sisältäviin hakemistoihin:
+Hakemistorakenne, jossa tehtävät ovat jaettuna omiin hakemistoihinsa:
 
 ```
 osa0
@@ -13,4 +13,5 @@ osa2
   maiden_tiedot
 ```
 
-Hakemistoon kannattaa sijoittaa koko tehtäväsarjan react-projekti lukuunottamatta riippuvuuksia sisältävää hakemistoa <i>node\_modules</i>
+Git-ignore:
+<i>node\_modules</i>
