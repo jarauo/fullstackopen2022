@@ -1,5 +1,11 @@
 title Fullstack open 2022 tehtävä 0.4
 selain->palvelin: HTTP POST https://studies.cs.helsinki.fi/exampleapp/new_note
+
+note over palvelin: 
+palvelin lisää uuden 
+noten tietorakenteeseen
+end note
+
 palvelin-->selain: Redirect to https://studies.cs.helsinki.fi/exampleapp/notes
 selain->palvelin: HTTP GET https://studies.cs.helsinki.fi/exampleapp/notes
 palvelin-->selain: HTML-koodi
