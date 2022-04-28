@@ -9,6 +9,7 @@ osa1
   unicafe
   anekdootit
 osa2
+  kurssitiedot
   puhelinluettelo
   maiden_tiedot
 ```
