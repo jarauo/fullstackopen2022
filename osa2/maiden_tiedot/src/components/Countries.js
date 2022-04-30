@@ -1,29 +1,48 @@
 import Country from "./Country"
 
-const Countries = ({persons, filterName}) => {
-    let filteredPersons = persons
+const Countries = ({countries, getCountryName}) => {
+    let filteredCountries = countries
 
-    const filter = (person) => {
-        //console.log("filter:", person)
-        let index = person.toLowerCase().indexOf(filterName.toLowerCase())
-        return index
-    }
+    //console.log("filteredCountries amount:", filteredCountries)
 
-    if (filterName !== '') {
-        filteredPersons = persons.filter(person => console.log(person.name, filter(person.name)) || filter(person.name) !== -1)
-    }
-    
-    //console.log("filteredPersons:", filteredPersons)
-
-    return(
-        <div>
-            <ul>
-                {filteredPersons.map(person =>
-                    <Country key={person.name} name={person.name} number={person.number}/>
+    /*
+    Renders full details if there's only 1 country
+    Render a list of countries if maximum of 10 countries match the filter string
+    */
+    if (filteredCountries.length === 1) {
+        return(
+            <div>
+                {filteredCountries.map(country =>
+                    <Country 
+                        key={country.name.common} 
+                        name={country.name.common} 
+                        capital={country.capital}
+                        area={country.area}
+                        languages={country.languages}
+                        flag={country.flags.png}
+                    />
                 )}
-            </ul>
-        </div>
-    )
+            </div>
+        )
+    } else if (filteredCountries.length > 10) {
+        //console.log("Over 10: ", filteredCountries.length)
+        return(
+            <div>
+                Too many matches, specify another filter
+            </div>
+        )
+    } else {
+        //console.log("More than 1: ",filteredCountries.length)
+        return(
+            <div>
+                <ul>
+                    {filteredCountries.map(country =>
+                        <Country key={country.name.common} name={country.name.common} filter={getCountryName} />
+                    )}
+                </ul>
+            </div>
+        )
+    }
 }
 
-export default Persons
+export default Countries

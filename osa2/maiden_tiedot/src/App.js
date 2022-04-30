@@ -5,72 +5,57 @@ import Countries from "./components/Countries"
 
 const App = () => {
   const [countries, setCountries] = useState([])
-  const [newName, setNewName] = useState('')
-  const [newNumber, setNewNumber] = useState('')
-  const [filterName, setFilterName] = useState('')
+  const [filterValue, setFilterValue] = useState('')
+  const [filteredCountries, setFilteredCountries] = useState([])
+
+  //https://restcountries.com/v3.1/all
+  //http://localhost:3001/maat
 
   useEffect(() => {
-    //console.log("Effect")
+    //console.log("Effect Maat")
     axios
-        .get('http://localhost:3001/persons')
+        .get('https://restcountries.com/v3.1/all')
         .then(response => {
           //console.log('promise fulfilled')
-          setPersons(response.data)
+          setCountries(response.data)
         })
   },[])
 
-  const addPerson = (event) => {
-    event.preventDefault()
-    //console.log('Button clicked', event.target)
+  const compareNameAndFilter = (name, value) => {
+    let index = -1
 
-    const personObject = {
-      name: newName,
-      number: newNumber
+    if (name != null) {
+      index = name.toLowerCase().indexOf(value.toLowerCase())
     }
 
-    if (isPersonAlreadyAdded(personObject)) {
-      alert(`${newName} is already added to phonebook`)
-      setNewName('')
-
-    } else {
-      setPersons(persons.concat(personObject))
-      setNewName('')
-    }
-  }
-
-  const inputNameChangeHandler = (event) => {
-    //console.log("inputNameChangeHandler", event.target.value)
-    setNewName(event.target.value)
-  }
-
-  const inputNumberChangeHandler = (event) => {
-    //console.log("inputNumberChangeHandler", event.target.value)
-    setNewNumber(event.target.value)
-  }
-
-  const isPersonAlreadyAdded = (personObject) => {
-    //console.log("PersonObject", personObject)
-    const index = persons.findIndex(person => person.name === personObject.name)
-    //console.log("isPersonAlreadyAdded: ", index === -1 ? false : true)
-    return index === -1 ? false : true
+    return index
   }
 
   const filterNameHandler = (event) => {
-    //console.log("filterNameHandler ",event.target.value)
-    setFilterName(event.target.value)
+    //console.log("filterNameHandler")
+    let value = event.target.value
+    setFilterValue(value)
+    
+    let filtered = countries.filter(country => compareNameAndFilter(country.name.common, value) !== -1)
+    setFilteredCountries(filtered)
+    
   }
+
+  const getCountryName = (event) => {
+    //console.log("getCountryNameHandler")
+    let value = event.target.value
+    setFilterValue(value)
+
+    let filtered = countries.filter(country => compareNameAndFilter(country.name.common, value) !== -1)
+    setFilteredCountries(filtered)
+  }
+
+  //console.log("FILTERED COUNTRIES: ", filteredCountries)
 
   return (
     <div>
-      <h2>Phonebook</h2>
-      <Filter name={filterName} filterNameHandler={filterNameHandler} />
-      <h3>Add a new</h3>
-      <PersonForm addPerson={addPerson} 
-        newName={newName} inputNameChangeHandler={inputNameChangeHandler} 
-        newNumber={newNumber} inputNumberChangeHandler={inputNumberChangeHandler} 
-      />
-      <h2>Numbers</h2>
-      <Persons persons={persons} filterName={filterName} />
+      <Filter name={filterValue} filterNameHandler={filterNameHandler} />
+      <Countries countries={filteredCountries} getCountryName={getCountryName} />
     </div>
   )
 
