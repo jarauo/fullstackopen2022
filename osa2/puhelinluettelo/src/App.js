@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react'
-import axios from 'axios'
 import Filter from "./components/Filter"
 import PersonForm from "./components/PersonForm"
 import Persons from "./components/Persons"
+import pbService from './services/phonebook'
 
 const App = () => {
   const [persons, setPersons] = useState([])
@@ -12,12 +12,11 @@ const App = () => {
 
   useEffect(() => {
     //console.log("Effect")
-    axios
-        .get('http://localhost:3001/persons')
-        .then(response => {
-          //console.log('promise fulfilled')
-          setPersons(response.data)
-        })
+    pbService
+      .getAll()
+      .then(initialPersons => {
+        setPersons(initialPersons)
+      })
   },[])
 
   const addPerson = (event) => {
@@ -29,14 +28,58 @@ const App = () => {
       number: newNumber
     }
 
-    if (isPersonAlreadyAdded(personObject)) {
-      alert(`${newName} is already added to phonebook`)
-      setNewName('')
+    let foundPerson = isPersonAlreadyAdded(personObject)
 
+    //console.log("foundPerson:", foundPerson)
+
+    if (typeof foundPerson !== "undefined") {
+      if (window.confirm(`${personObject.name} is already added to phonebook, replace the old number with a new one?`)) {
+        //console.log("foundPerson.id:",foundPerson.id, "foundPerson.name",foundPerson.name)
+        pbService
+          .update(foundPerson.id, personObject)
+          .then(returnedPerson => {
+            //console.log("returnedPerson", returnedPerson)
+            setPersons(persons.map(person => person.id !== foundPerson.id ? person : returnedPerson))
+            setNewName('')
+            setNewNumber('')
+          })
+          .catch(error => {
+            console.log("UpdatePersonError", error)
+            alert(`the person '${foundPerson.name}' was already deleted from server`)
+            setPersons(persons.filter(person => person.id !== foundPerson.id))
+          })
+      }
     } else {
-      setPersons(persons.concat(personObject))
-      setNewName('')
+      pbService
+        .create(personObject)
+        .then(response => {
+          setPersons(persons.concat(response))
+          setNewName('')
+          setNewNumber('')
+        }).catch(error => {
+          console.log("AddPersonError: ", error)
+        })
     }
+  }
+
+  const deletePerson = (person) => {
+    //console.log("DELETETEST: ", person)
+
+    const personName = person.name
+    const personId = person.id
+
+    //console.log("Person to be deleted:", person.name, "id", person.id)
+
+    if (window.confirm(`Do you really want to delete ${personName}?`))
+    pbService
+      .deleteOne(personId)
+      .then(response => {
+        //console.log("DeleteResponse: ", response.data)
+        setPersons(persons.filter(person => person.id !== personId))
+      }).catch(error => {
+        console.log("DeleteError", error)
+      })
+
   }
 
   const inputNameChangeHandler = (event) => {
@@ -51,9 +94,9 @@ const App = () => {
 
   const isPersonAlreadyAdded = (personObject) => {
     //console.log("PersonObject", personObject)
-    const index = persons.findIndex(person => person.name === personObject.name)
+    const foundPerson = persons.find(person => person.name === personObject.name)
     //console.log("isPersonAlreadyAdded: ", index === -1 ? false : true)
-    return index === -1 ? false : true
+    return foundPerson
   }
 
   const filterNameHandler = (event) => {
@@ -71,7 +114,7 @@ const App = () => {
         newNumber={newNumber} inputNumberChangeHandler={inputNumberChangeHandler} 
       />
       <h2>Numbers</h2>
-      <Persons persons={persons} filterName={filterName} />
+      <Persons persons={persons} filterName={filterName} deletePerson={deletePerson} />
     </div>
   )
 

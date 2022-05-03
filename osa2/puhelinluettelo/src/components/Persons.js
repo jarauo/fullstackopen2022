@@ -1,6 +1,6 @@
 import Person from "./Person"
 
-const Persons = ({persons, filterName}) => {
+const Persons = ({persons, filterName, deletePerson}) => {
     let filteredPersons = persons
 
     const filter = (person) => {
@@ -10,7 +10,7 @@ const Persons = ({persons, filterName}) => {
     }
 
     if (filterName !== '') {
-        filteredPersons = persons.filter(person => console.log(person.name, filter(person.name)) || filter(person.name) !== -1)
+        filteredPersons = persons.filter(person => filter(person.name) !== -1)
     }
     
     //console.log("filteredPersons:", filteredPersons)
@@ -19,7 +19,7 @@ const Persons = ({persons, filterName}) => {
         <div>
             <ul>
                 {filteredPersons.map(person =>
-                    <Person key={person.name} name={person.name} number={person.number}/>
+                    <Person key={person.id} person={person} deletePerson={deletePerson} />    
                 )}
             </ul>
         </div>
