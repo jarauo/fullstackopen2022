@@ -3,12 +3,15 @@ import Filter from "./components/Filter"
 import PersonForm from "./components/PersonForm"
 import Persons from "./components/Persons"
 import pbService from './services/phonebook'
+import Notification from "./components/Notification"
 
 const App = () => {
   const [persons, setPersons] = useState([])
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [filterName, setFilterName] = useState('')
+  const [errorMessage, setErrorMessage] = useState([])
+  
 
   useEffect(() => {
     //console.log("Effect")
@@ -39,13 +42,21 @@ const App = () => {
           .update(foundPerson.id, personObject)
           .then(returnedPerson => {
             //console.log("returnedPerson", returnedPerson)
+            setErrorMessage([`Changed ${returnedPerson.name} number`,"success"])
+            setTimeout(() => {
+              setErrorMessage(null)
+            },5000)
             setPersons(persons.map(person => person.id !== foundPerson.id ? person : returnedPerson))
             setNewName('')
             setNewNumber('')
           })
           .catch(error => {
             console.log("UpdatePersonError", error)
-            alert(`the person '${foundPerson.name}' was already deleted from server`)
+            //alert(`the person '${foundPerson.name}' was already deleted from server`)
+            setErrorMessage([`the person ${personObject.name} was already deleted from server`,"error"])
+            setTimeout(() => {
+              setErrorMessage(null)
+            },5000)
             setPersons(persons.filter(person => person.id !== foundPerson.id))
           })
       }
@@ -53,6 +64,10 @@ const App = () => {
       pbService
         .create(personObject)
         .then(response => {
+          setErrorMessage([`Added ${personObject.name}`,"success"])
+            setTimeout(() => {
+              setErrorMessage(null)
+            },5000)
           setPersons(persons.concat(response))
           setNewName('')
           setNewNumber('')
@@ -75,6 +90,10 @@ const App = () => {
       .deleteOne(personId)
       .then(response => {
         //console.log("DeleteResponse: ", response.data)
+        setErrorMessage([`Deleted ${personName}`,"success"])
+            setTimeout(() => {
+              setErrorMessage(null)
+            },5000)
         setPersons(persons.filter(person => person.id !== personId))
       }).catch(error => {
         console.log("DeleteError", error)
@@ -107,6 +126,7 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
+      <Notification message={errorMessage} />
       <Filter name={filterName} filterNameHandler={filterNameHandler} />
       <h3>Add a new</h3>
       <PersonForm addPerson={addPerson} 
