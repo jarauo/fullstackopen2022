@@ -18,6 +18,7 @@ const App = () => {
     pbService
       .getAll()
       .then(initialPersons => {
+        console.log(initialPersons)
         setPersons(initialPersons)
       })
   },[])
