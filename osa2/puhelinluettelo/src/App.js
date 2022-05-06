@@ -18,7 +18,7 @@ const App = () => {
     pbService
       .getAll()
       .then(initialPersons => {
-        console.log(initialPersons)
+        //console.log(initialPersons)
         setPersons(initialPersons)
       })
   },[])
@@ -52,9 +52,9 @@ const App = () => {
             setNewNumber('')
           })
           .catch(error => {
-            console.log("UpdatePersonError", error)
+            //console.log("UpdatePersonError", error)
             //alert(`the person '${foundPerson.name}' was already deleted from server`)
-            setErrorMessage([`the person ${personObject.name} was already deleted from server`,"error"])
+            setErrorMessage([`the person ${personObject.name} was already deleted from server or edited number is invalid`,"error"])
             setTimeout(() => {
               setErrorMessage(null)
             },5000)
@@ -73,7 +73,11 @@ const App = () => {
           setNewName('')
           setNewNumber('')
         }).catch(error => {
-          console.log("AddPersonError: ", error)
+          //console.log("AddPersonError: ", error.response)
+          setErrorMessage([`${error.response.data.error}`,"error"])
+          setTimeout(() => {
+            setErrorMessage(null)
+          },5000)
         })
     }
   }
